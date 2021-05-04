@@ -6,8 +6,6 @@ public class Group {
 
     private final ArrayList<Person> members = new ArrayList<Person>();
 
-
-
     public void setMembers(Person person){
         members.add(person);
     }

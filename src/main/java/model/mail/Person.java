@@ -11,4 +11,10 @@ public class Person {
         this.firstName = firstName;
         this.address = address;
     }
+
+
+
+    public Person(String witnessAdress) {
+        this.address = witnessAdress;
+    }
 }
