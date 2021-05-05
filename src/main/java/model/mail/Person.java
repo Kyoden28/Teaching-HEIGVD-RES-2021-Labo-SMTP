@@ -1,17 +1,21 @@
 package model.mail;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public class Person {
 
     private String lastName;
     private String firstName;
     private final String address;
 
-    public Person(String lastName, String firstName, String address) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.address = address;
+    public String getAddress(){
+        return this.address;
     }
-
 
 
     public Person(String witnessAdress) {

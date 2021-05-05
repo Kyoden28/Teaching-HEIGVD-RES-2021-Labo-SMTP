@@ -21,6 +21,7 @@ public class ConfigurationManager implements IConfigurationManager {
     private List<Person> victims;
     private List<String> messages;
     private int numberOfGroups;
+
     private List<Person> witnessesToCC;
 
 

@@ -2,29 +2,23 @@ package stmp;
 
 import Utils.CustomResponseStmpException;
 import Utils.ProtocolResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import model.mail.Message;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.Logger;
-
-public class SmtpClient implements ISmtpClient {
+@Getter
+@Setter
+@AllArgsConstructor
+public class
+SmtpClient implements ISmtpClient {
 
     private static final Logger LOG = Logger.getLogger(SmtpClient.class.getName());
-
     private String smtpServerAddress;
     private int smtpServerPort;
-
-
-
-
-    public SmtpClient(String smtpServerAdress, int smtpServerPort) {
-        this.smtpServerAddress = smtpServerAdress;
-        this.smtpServerPort = smtpServerPort;
-    }
-
-
-
 
     public void sendMessage(Message message) throws CustomResponseStmpException, IOException {
 
