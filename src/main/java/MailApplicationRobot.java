@@ -1,13 +1,15 @@
 
+import Utils.CustomResponseStmpException;
 import config.ConfigurationManager;
 import config.IConfigurationManager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import model.prank.Prank;
 import model.prank.PrankGenerator;
 import stmp.SmtpClient;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Data
@@ -30,6 +32,15 @@ public class MailApplicationRobot {
         //Send pranks
         SmtpClient smtpClient = new SmtpClient(configurationManager.getStmpServerAddress(),configurationManager.getSmtpServerPort());
 
-
+        List<Prank> pranksToSend = prankGenerator.createPranks();
+        for (Prank prank : pranksToSend) {
+            try {
+                smtpClient.sendPrank(prank);
+            } catch (CustomResponseStmpException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

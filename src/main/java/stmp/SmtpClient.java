@@ -29,11 +29,13 @@ SmtpClient implements ISmtpClient {
         this.smtpServerAddress = smtpServerAddress;
         this.smtpServerPort = smtpServerPort;
     }
+
     @Override
     public void sendPrank(Prank prank) throws CustomResponseStmpException, IOException {
 
         Socket socket;
         //Connexion via socket
+        String responseAnalyze;
         try {
             socket = new Socket(smtpServerAddress, smtpServerPort);
         } catch (IOException e) {
@@ -47,7 +49,7 @@ SmtpClient implements ISmtpClient {
             String responseStmp = bReader.readLine();
             LOG.log(Level.INFO, responseStmp);
 
-            String responseAnalyze = null;
+            responseAnalyze = null;
 
             if (!responseAnalyze.equals(ProtocolResponse.CODE220)) {
                 responseAnalyze = ProtocolResponse.analyzeResponse(responseStmp);
@@ -59,7 +61,7 @@ SmtpClient implements ISmtpClient {
 
             while ((responseAnalyze = bReader.readLine()) != null) {
                 System.out.println("Received : " + responseAnalyze);
-                if (responseAnalyze.startsWith("250 "))
+                if (responseAnalyze.startsWith("250-"))
                     break;
             }
         } catch (IOException e) {
@@ -73,21 +75,100 @@ SmtpClient implements ISmtpClient {
 
         // get to
         int cpt = 0;
-        for (Person person : prank.getGroup().getMembers()) {
-            pWriter.print(person.getAddress());
-            if (cpt != prank.getGroup().getMembers().size() - 1)
+
+        for (Person person : prank.getGroup().getRecipients()) {
+            //Set RCPT TO
+            pWriter.println("RCPT TO : <");
+            pWriter.print(person.getAddress() + ">\r\n");
+            //Read response
+            responseAnalyze = bReader.readLine();
+            if (!responseAnalyze.startsWith("250-")) {
+                LOG.log(Level.INFO, "Fail to RCPT TO the adress " + person.getAddress());
+            }
+
+           /* if (cpt != prank.getGroup().getRecipients().size() - 1)
                 pWriter.print(",");
             else
                 pWriter.print("\n");
-            cpt++;
+            cpt++;*/
         }
 
-        // get cc
+        // get cci
+        for (Person person : prank.getGroup().getCci()) {
+            //Set RCPT TO
+            pWriter.println("RCPT TO : <");
+            pWriter.print(person.getAddress() + ">\r\n");
+            //Read response
+            responseAnalyze = bReader.readLine();
+            if (!responseAnalyze.startsWith("250-")) {
+                LOG.log(Level.INFO, "Fail to RCPT TO the address " + person.getAddress());
+            }
+
+           /* if (cpt != prank.getGroup().getRecipients().size() - 1)
+                pWriter.print(",");
+            else
+                pWriter.print("\n");
+            cpt++;*/
+        }
+
+        //Set DATA
+        pWriter.flush();
+        pWriter.println("DATA");
+        responseAnalyze = bReader.readLine();
+        if (!responseAnalyze.startsWith("354-")) {
+            LOG.log(Level.INFO, "Fail to DATA ");
+        } else {
+            pWriter.println("From: " + prank.getGroup().getSender());
+            pWriter.println(prank.getMessage().getSubject());
 
 
-        //TODO : Connexion serveur , logique envoie message...
+            pWriter.print("To: ");
 
-        //TODO: Analyse retour
+            int numberOfRcpTo = 0;
+            for (Person person : prank.getGroup().getRecipients()) {
+                //Set RCP
+                pWriter.print(person.getAddress());
+                if (numberOfRcpTo == prank.getGroup().getRecipients().size() - 1) {
+                    pWriter.print(",");
+                } else {
+                    pWriter.println();
+                }
+            }
+
+            pWriter.flush();
+
+            pWriter.print("Bcc: ");
+            numberOfRcpTo = 0;
+            for (Person person : prank.getGroup().getCci()) {
+                //Set bcc
+                pWriter.print(person.getAddress());
+                if (numberOfRcpTo == prank.getGroup().getCci().size() - 1) {
+                    pWriter.print(",");
+                } else {
+                    pWriter.println();
+                }
+            }
+
+            pWriter.flush();
+
+            pWriter.print(prank.getMessage().getSubject());
+            pWriter.flush();
+
+            pWriter.println("Content-Type: text/plain; charset=utf-8");
+            pWriter.flush();
+
+            pWriter.println(prank.getMessage().getBody());
+            pWriter.println(".");
+            pWriter.println("QUIT");
+            pWriter.flush();
+
+            responseAnalyze = bReader.readLine();
+            if (!responseAnalyze.startsWith("250-")) {
+                LOG.log(Level.INFO, "Fail to send mail ");
+
+                LOG.log(Level.INFO, "The message was send successfully");
+
+            }
+        }
     }
-
 }

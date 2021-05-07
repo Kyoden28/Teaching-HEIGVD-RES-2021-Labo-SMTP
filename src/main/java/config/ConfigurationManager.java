@@ -43,7 +43,7 @@ public class ConfigurationManager implements IConfigurationManager {
         this.smtpServerAddr = properties.getProperty("stmpServerAddress");
         this.smtpServerPort = Integer.parseInt(properties.getProperty("smtpServerPort"));
         this.numberOfGroups = Integer.parseInt(properties.getProperty("numberOfGroups"));
-        this.numberOfVictimsByGroup =  Integer.parseInt(properties.getProperty("numberOfGroupsByGroup"));
+        this.numberOfVictimsByGroup =  Integer.parseInt(properties.getProperty("numberOfPeopleByGroup"));
         this.witnessesToCC = new ArrayList<>();
         String witnesstoCC = properties.getProperty("witnessestoCC");
         List<String> witnessesAdress = Arrays.asList(witnesstoCC.split(";"));
