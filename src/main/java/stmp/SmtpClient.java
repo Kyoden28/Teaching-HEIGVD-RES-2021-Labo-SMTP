@@ -11,8 +11,10 @@ import model.prank.Prank;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 @Data
 public class
@@ -46,13 +48,11 @@ SmtpClient implements ISmtpClient {
             bReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             pWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
 
-            String responseStmp = bReader.readLine();
-            LOG.log(Level.INFO, responseStmp);
+            responseAnalyze = bReader.readLine();
+            LOG.log(Level.INFO, responseAnalyze);
 
-            responseAnalyze = null;
-
-            if (!responseAnalyze.equals(ProtocolResponse.CODE220)) {
-                responseAnalyze = ProtocolResponse.analyzeResponse(responseStmp);
+            if (!responseAnalyze.startsWith(ProtocolResponse.CODE220)) {
+                responseAnalyze = ProtocolResponse.analyzeResponse(responseAnalyze);
                 throw new CustomResponseStmpException(responseAnalyze);
             }
 
@@ -69,56 +69,47 @@ SmtpClient implements ISmtpClient {
         }
 
         // get from
-        pWriter.println("MAIL FROM: " + prank.getGroup().getSender());
+        pWriter.println("MAIL FROM: " + prank.getGroup().getSender().getAddress());
         pWriter.flush();
         LOG.log(Level.INFO, bReader.readLine());
 
         // get to
-        int cpt = 0;
 
         for (Person person : prank.getGroup().getRecipients()) {
             //Set RCPT TO
-            pWriter.println("RCPT TO : <");
+            pWriter.print("RCPT TO: <");
             pWriter.print(person.getAddress() + ">\r\n");
             //Read response
+            pWriter.flush();
             responseAnalyze = bReader.readLine();
-            if (!responseAnalyze.startsWith("250-")) {
+            if (!responseAnalyze.startsWith("250")) {
                 LOG.log(Level.INFO, "Fail to RCPT TO the adress " + person.getAddress());
             }
 
-           /* if (cpt != prank.getGroup().getRecipients().size() - 1)
-                pWriter.print(",");
-            else
-                pWriter.print("\n");
-            cpt++;*/
         }
+
+
 
         // get cci
         for (Person person : prank.getGroup().getCci()) {
             //Set RCPT TO
-            pWriter.println("RCPT TO : <");
+            pWriter.print("RCPT TO: <");
             pWriter.print(person.getAddress() + ">\r\n");
+            pWriter.flush();
             //Read response
             responseAnalyze = bReader.readLine();
-            if (!responseAnalyze.startsWith("250-")) {
+            if (!responseAnalyze.startsWith("250")) {
                 LOG.log(Level.INFO, "Fail to RCPT TO the address " + person.getAddress());
             }
-
-           /* if (cpt != prank.getGroup().getRecipients().size() - 1)
-                pWriter.print(",");
-            else
-                pWriter.print("\n");
-            cpt++;*/
         }
 
         //Set DATA
-        pWriter.flush();
         pWriter.println("DATA");
         responseAnalyze = bReader.readLine();
-        if (!responseAnalyze.startsWith("354-")) {
+        if (!responseAnalyze.startsWith("250")) {
             LOG.log(Level.INFO, "Fail to DATA ");
         } else {
-            pWriter.println("From: " + prank.getGroup().getSender());
+            pWriter.println("From: " + prank.getGroup().getSender().getAddress());
             pWriter.println(prank.getMessage().getSubject());
 
 
@@ -151,7 +142,10 @@ SmtpClient implements ISmtpClient {
 
             pWriter.flush();
 
-            pWriter.print(prank.getMessage().getSubject());
+            pWriter.print("Subject: =?UTF-8?B?");
+            String subject =  Base64.getEncoder().encodeToString(prank.getMessage().getSubject().getBytes(StandardCharsets.UTF_8));
+            pWriter.print(subject);
+            pWriter.println("?=");
             pWriter.flush();
 
             pWriter.println("Content-Type: text/plain; charset=utf-8");
@@ -163,7 +157,7 @@ SmtpClient implements ISmtpClient {
             pWriter.flush();
 
             responseAnalyze = bReader.readLine();
-            if (!responseAnalyze.startsWith("250-")) {
+            if (!responseAnalyze.startsWith("250")) {
                 LOG.log(Level.INFO, "Fail to send mail ");
 
                 LOG.log(Level.INFO, "The message was send successfully");

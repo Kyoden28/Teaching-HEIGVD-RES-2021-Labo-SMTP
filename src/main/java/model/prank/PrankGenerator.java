@@ -49,13 +49,18 @@ public class PrankGenerator {
 
         //Create groups of people
         List<Group> groups = new ArrayList<>();
+        List<Person> recipients;
         for (int i = 0; i < numberOfGroup; i++) {
+            recipients = new ArrayList<>();
             //Random
             Collections.shuffle(victims);
-            // Set the sender from the victims pool
-            List<Person> recipients = victims.subList(0, numberOfPeopleByGroup);
-            sender = recipients.remove(0);
+            sender = victims.remove(0);
+            for(int k = 0; k < numberOfPeopleByGroup - 1; k++){
+                recipients.add(victims.get(k));
+            }
+
             groups.add(new Group(recipients, witness , sender));
+
         }
 
         List<Prank> listOfPrank = new ArrayList<>();
