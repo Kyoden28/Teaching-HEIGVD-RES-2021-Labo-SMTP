@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-
 /*
  *
  */
@@ -18,18 +17,16 @@ public class ConfigurationManager implements IConfigurationManager {
 
     private String smtpServerAddr;
     private int smtpServerPort;
-    private List<Person> victims;
-    private List<String> messages;
+    private final List<Person> victims = new ArrayList<>();
+    private final List<Message> messages = new ArrayList<>();
     private int numberOfGroups;
-
     private List<Person> witnessesToCC;
 
 
     public ConfigurationManager() {
-
         try {
-            messages = initializeMessages("./config/messages.utf8");
-            victims = initializeVictims("./config/victims.utf8");
+            initializeMessages("./config/messages.utf8");
+            initializeVictims("./config/victims.utf8");
             initializeProperties("./config/configuration.properties");
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,7 +43,7 @@ public class ConfigurationManager implements IConfigurationManager {
         this.smtpServerPort = Integer.parseInt(properties.getProperty("smtpServerPort"));
         this.numberOfGroups = Integer.parseInt(properties.getProperty("numberOfGroups"));
         this.witnessesToCC = new ArrayList<>();
-        String witnesstoCC = properties.getProperty("witnessesToCC");
+        String witnesstoCC = properties.getProperty("witnessestoCC");
         List<String> witnessesAdress = Arrays.asList(witnesstoCC.split(";"));
         for (String witnessAdress : witnessesAdress) {
             this.witnessesToCC.add(new Person(witnessAdress));
@@ -54,9 +51,9 @@ public class ConfigurationManager implements IConfigurationManager {
 
     }
 
-    private List<String> initializeMessages(String filename) {
+    private void initializeMessages(String filename) {
 
-        List<String> listMessages = new ArrayList<>();
+
 
 
         try {
@@ -65,14 +62,27 @@ public class ConfigurationManager implements IConfigurationManager {
             BufferedReader reader = new BufferedReader(inputStreamReader);
             String line;
 
-            //TODO : Tester en débug + voir pour ameliorer directement en List<Message> - Subject
-            while ((line = reader.readLine()) != null) {
+            int messageNumber = -1;
+
+            Message message = null;
+
+            //Read subject
+            //line = reader.readLine();
+            //Prepare message
+
+
+            while (((line = reader.readLine()) != null )){
+                messageNumber++;
                 StringBuilder body = new StringBuilder();
-                while (line != null && (!line.equals("=="))) {
+                message = new Message();
+                message.setSubject(line);
+                messages.add(message);
+                while((line = reader.readLine() )!= null && (!line.equals("==")))
+                {
                     body.append(line).append("\r\n");
-                    line = reader.readLine();
+                    //    line = reader.readLine();
                 }
-                listMessages.add(body.toString());
+                messages.get(messageNumber).setBody(body.toString());
             }
 
         } catch (FileNotFoundException e) {
@@ -81,23 +91,19 @@ public class ConfigurationManager implements IConfigurationManager {
             e.printStackTrace();
         }
 
-        return listMessages;
     }
 
-    private List<Person> initializeVictims(String filename) {
-
-        List<Person> listVictims = null;
+    private void initializeVictims(String filename) {
 
         try {
             FileInputStream fileInputStream = new FileInputStream(filename);
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
-            listVictims = new ArrayList<>();
             String mailAdress;
 
             while ((mailAdress = reader.readLine()) != null) {
-                listVictims.add(new Person(mailAdress));
+                victims.add(new Person(mailAdress));
             }
 
         } catch (FileNotFoundException e) {
@@ -105,8 +111,6 @@ public class ConfigurationManager implements IConfigurationManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return listVictims;
 
     }
 
@@ -116,7 +120,7 @@ public class ConfigurationManager implements IConfigurationManager {
     }
 
     @Override
-    public List<String> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 

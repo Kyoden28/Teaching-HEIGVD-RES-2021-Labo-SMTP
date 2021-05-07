@@ -31,7 +31,7 @@ public class Prank {
      * @param configurationManager pranks configuration
      */
     public Message generatePrankMessage(IConfigurationManager configurationManager){
-        Message message = new Message(this.from, group.getMembers(), /*group.getCc(),group.getCci(),*/ this.subject, this.body);
+       // Message message = new Message(this.from, group.getMembers(), /*group.getCc(),group.getCci(),*/ this.subject, this.body);
         //message.send(new SmtpClient(configurationManager.getSmtpServerAddress(), configurationManager.getSmtpServerPort()));
         return message;
     }
