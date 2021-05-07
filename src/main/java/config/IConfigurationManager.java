@@ -13,4 +13,12 @@ public interface IConfigurationManager {
 
     public List<Person> getWitness();
 
+    public int getNumberofGroup();
+
+    public int getNumberOfPeopleByGroup();
+
+    public int getSmtpServerPort();
+
+    public String getStmpServerAddress();
+
 }

@@ -1,31 +1,33 @@
 package model.mail;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.ArrayList;
+
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
 public class Group {
 
-    private final int MIN_PEOPLE_BY_GROUP = 5;
-    private final ArrayList<Person> members;
-    //private final ArrayList<Person> cc = new ArrayList<Person>;
-    //private final ArrayList<Person> cci;
-    private final String sender;
-    public Group(ArrayList<Person> victims, String sender){
-        Collections.shuffle(victims);
+    private final int MIN_PEOPLE_BY_GROUP = 2;
+    private final List<Person> members;
+    private final List<Person> cci;
+    private final Person sender;
+
+    public Group(List<Person> victims, List<Person> cci, Person sender){
+
+        this.cci = cci;
         this.members = victims;
         this.sender = sender;
+        Collections.shuffle(victims);
     }
 
     public void setMembers(Person person){
         members.add(person);
     }
 
-    public ArrayList<Person> getMembers() {
+    public List<Person> getMembers() {
         return members;
     }
 }

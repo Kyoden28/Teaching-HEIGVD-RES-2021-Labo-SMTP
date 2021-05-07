@@ -20,6 +20,7 @@ public class ConfigurationManager implements IConfigurationManager {
     private final List<Person> victims = new ArrayList<>();
     private final List<Message> messages = new ArrayList<>();
     private int numberOfGroups;
+    private int numberOfVictimsByGroup;
     private List<Person> witnessesToCC;
 
 
@@ -42,6 +43,7 @@ public class ConfigurationManager implements IConfigurationManager {
         this.smtpServerAddr = properties.getProperty("stmpServerAddress");
         this.smtpServerPort = Integer.parseInt(properties.getProperty("smtpServerPort"));
         this.numberOfGroups = Integer.parseInt(properties.getProperty("numberOfGroups"));
+        this.numberOfVictimsByGroup =  Integer.parseInt(properties.getProperty("numberOfGroupsByGroup"));
         this.witnessesToCC = new ArrayList<>();
         String witnesstoCC = properties.getProperty("witnessestoCC");
         List<String> witnessesAdress = Arrays.asList(witnesstoCC.split(";"));
@@ -52,8 +54,6 @@ public class ConfigurationManager implements IConfigurationManager {
     }
 
     private void initializeMessages(String filename) {
-
-
 
 
         try {
@@ -116,6 +116,7 @@ public class ConfigurationManager implements IConfigurationManager {
 
     @Override
     public List<Person> getVictims() {
+
         return victims;
     }
 
@@ -128,5 +129,24 @@ public class ConfigurationManager implements IConfigurationManager {
     public List<Person> getWitness() {
         return witnessesToCC;
     }
+
+    @Override
+    public int getNumberofGroup() { return numberOfGroups; }
+
+    @Override
+    public int getNumberOfPeopleByGroup() { return numberOfVictimsByGroup; }
+
+    @Override
+    public int getSmtpServerPort() {
+        return this.smtpServerPort;
+    }
+
+    @Override
+    public String getStmpServerAddress() {
+        return this.smtpServerAddr;
+    }
+
+
+
 
 }
