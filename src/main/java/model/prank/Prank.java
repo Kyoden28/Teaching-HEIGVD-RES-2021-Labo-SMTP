@@ -17,6 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+/**
+ * Prank Class
+ * Concerns the content of a prank
+ * @authors Christian Gomes & Johann Werkle
+ */
 public class Prank {
 
     private Group group;

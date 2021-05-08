@@ -5,6 +5,10 @@ import model.mail.Person;
 
 import java.util.List;
 
+/**
+ * Interface class for Configuration Manager
+ * @authors Christian Gomes & Johann Werkle
+ */
 public interface IConfigurationManager {
 
     public List<Person> getVictims();

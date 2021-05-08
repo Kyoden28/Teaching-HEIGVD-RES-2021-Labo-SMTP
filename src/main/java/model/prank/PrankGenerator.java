@@ -17,32 +17,40 @@ import java.util.logging.Logger;
 
 @Data
 @AllArgsConstructor
+/**
+ * PrankGenerator Class
+ * Allows the generation of pranks mail
+ * @authors Christian Gomes & Johann Werkle
+ */
 public class PrankGenerator {
 
     private IConfigurationManager configurationManager;
     private static final Logger LOG = Logger.getLogger(PrankGenerator.class.getName());
-    //Create pranks
+
+    /**
+     * Allows the generation of pranks
+     * @return List of pranks
+     */
     public List<Prank> createPranks(){
 
-        //Get from
+
+        //Get informations
         Person sender;
-        //Get victims
         List<Person> victims = configurationManager.getVictims();
-        //Get messages
         List<Message> messages = configurationManager.getMessages();
-        //Get witness
         List<Person> witness = configurationManager.getWitness();
-        //Get numberGroups
         int numberOfGroup = configurationManager.getNumberofGroup();
+
+        //Checking the limitations
         if (numberOfGroup < 1){
-            //Limitation of victims
             numberOfGroup = 1;
             LOG.log(Level.INFO, "The number of groupss specified is too low. Therefore, it will be automatically set at one.");
         }
+
         int numberOfPeopleByGroup = configurationManager.getNumberOfPeopleByGroup();
 
+        //Checking the limitations
         if (numberOfPeopleByGroup >= victims.size()){
-            //Limitation of victims
             numberOfPeopleByGroup = victims.size()-1;
             LOG.log(Level.INFO, "The number of victims specified exceeds the number of victims in total. Therefore, it will be automatically reduced.");
         }
@@ -58,18 +66,15 @@ public class PrankGenerator {
             for(int k = 0; k < numberOfPeopleByGroup - 1; k++){
                 recipients.add(victims.get(k));
             }
-
             groups.add(new Group(recipients, witness , sender));
-
         }
 
+        //Creation of pranks by group
         List<Prank> listOfPrank = new ArrayList<>();
-        //By groups of victims , generate a prank
         for (Group group : groups) {
             Prank newPrank = new Prank();
             //Randomize the messages
             Collections.shuffle(messages);
-            //Set message for prank
             newPrank.setMessage(messages.get(0));
             newPrank.setGroup(group);
             listOfPrank.add(newPrank);
@@ -79,6 +84,3 @@ public class PrankGenerator {
     }
 
 }
-
-
-//TODO : GET/SET TO DATA

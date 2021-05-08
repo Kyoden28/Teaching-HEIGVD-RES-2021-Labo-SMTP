@@ -14,6 +14,12 @@ import java.util.logging.Logger;
 
 @Data
 @AllArgsConstructor
+/**
+ * Class MailApplicationRobot
+ * Main program of the application
+ * Allows you to send pranks to a list of addresses
+ * @authors Christian Gomes & Johann Werkle
+ */
 public class MailApplicationRobot {
 
 
@@ -31,7 +37,6 @@ public class MailApplicationRobot {
 
         //Send pranks
         SmtpClient smtpClient = new SmtpClient(configurationManager.getStmpServerAddress(),configurationManager.getSmtpServerPort());
-
         List<Prank> pranksToSend = prankGenerator.createPranks();
         for (Prank prank : pranksToSend) {
             try {
