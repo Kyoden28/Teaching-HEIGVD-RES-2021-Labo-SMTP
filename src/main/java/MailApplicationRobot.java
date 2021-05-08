@@ -22,7 +22,6 @@ import java.util.logging.Logger;
  */
 public class MailApplicationRobot {
 
-
     private static final Logger LOG = Logger.getLogger(MailApplicationRobot.class.getName());
 
     public static void main(String[] args) {

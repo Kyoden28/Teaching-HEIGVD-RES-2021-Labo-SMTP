@@ -144,7 +144,7 @@ public class SmtpClient implements ISmtpClient {
             for (Person person : prank.getGroup().getRecipients()) {
                 pWriter.print(person.getAddress());
                 System.out.print(person.getAddress());
-                if (numberOfRcpTo == prank.getGroup().getRecipients().size() - 1) {
+                if (numberOfRcpTo != prank.getGroup().getRecipients().size() - 1) {
                     pWriter.print(",");
                     System.out.print(",");
                     numberOfRcpTo++;
@@ -163,10 +163,12 @@ public class SmtpClient implements ISmtpClient {
                 //Set bcc
                 pWriter.print(person.getAddress());
                 System.out.print(person.getAddress());
-                if (numberOfRcpTo == prank.getGroup().getCci().size() - 1) {
+                if (numberOfRcpTo != prank.getGroup().getCci().size() - 1) {
                     pWriter.print(",");
                     System.out.print(",");
+                    numberOfRcpTo++;
                 } else {
+                    pWriter.println();
                     System.out.println();
                 }
             }
@@ -201,7 +203,7 @@ public class SmtpClient implements ISmtpClient {
                 LOG.log(Level.INFO, "Fail to send mail ");
 
             }else{
-                LOG.log(Level.INFO, "The message was send successfully");
+              //  LOG.log(Level.INFO, "The message was send successfully");
             }
         }
     }
