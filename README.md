@@ -69,8 +69,9 @@ Port du serveur : 2525
 Un serveur Mock est fourni avec l'application et s'exécute dans un conteneur Docker qui se trouve à la racine du projet. Le lancement peut être effectué depuis un terminal comme tel : 
 
 ```
-./Docker/build-image.sh
-./Docker/run-container.sh
+cd docker
+./build-image.sh
+./run-container.sh
 ```
 
 ## Description of implémentation
