@@ -15,7 +15,7 @@ Le but est de pouvoir définir un ou plusieurs groupe(s) de victimes (définies 
 Un utilisateur peut définir les paramètres de l'application à l'intérieur des fichiers de configuration **configuration.properties** définit comme tel :
 
 ```properties
-smtpServerPort=2525 //Port du serveur SMTP
+smtpServerPort=25 //Port du serveur SMTP
 stmpServerAddress=localhost	// Addresse du serveur SMTP
 numberOfGroups=4 // Nombre de groupes à générer
 numberOfPeopleByGroup=3 // Nombre de personnes par groupe
@@ -47,7 +47,7 @@ Subject: subject // sujet du mail
 Text // Body du mail
 
 ==
-Subject: subject // suject du mail
+Subject: subject // sujet du mail
 
 Text // Body du mail
 
@@ -64,7 +64,7 @@ En parallèle de l'application, il peut être intéressant de lancer un serveur 
 
 Adresse du serveur : localhost
 
-Port du serveur : 2525
+Port du serveur : 25
 
 Un serveur Mock est fourni avec l'application et s'exécute dans un conteneur Docker qui se trouve à la racine du projet. Le lancement peut être effectué depuis un terminal comme tel : 
 
@@ -74,21 +74,39 @@ cd docker
 ./run-container.sh
 ```
 
+Dès que le docker est lancé , nous avons accès via le navigateur à l'adresse http://localhost:8282/ qui nous permet d'avoir un affichage sur les mails. 
+
+![](images/mockmockexample.PNG)
+
+### Lancement du serveur sans docker
+
+Il est possible de lancer le serveur MockMock sans docker , pour cela il faut aller sur le repo https://github.com/tweakers/MockMock et télécharger le jar fourni. 
+
+Pour le démarrer il faut éxecuter la commande : 
+
+```-
+java -jar MockMock.jar (par défaut port 25 pour stmp et port 8282 , the web interface)
+
+ou 
+
+java -jar MockMock.jar -p 25000 -h 8080 (si l'on souhaite spécifier des ports)
+```
+
 ## Description of implémentation
 
 Voici un schéma URL au terme de l'implémentation du projet: 
 
-![UML](./UML.jpeg)
+![UML](images/UML.jpeg)
 
 Comme déjà commenté plus haut, la classe `Person` est définie par une adresse mail.
 
-La classe `Group` contient une liste de `Person` pour les destinataires d'un mail, une liste de Person pour les témoins et enfin un senderune adresse d'envoi utilisée pour masquer l'adresse du véritable envoyeur.
+La classe `Group` contient une liste de `Person` pour les destinataires d'un mail, une liste de Person pour les témoins et enfin un sender qui contient une adresse d'envoi utilisée pour masquer l'adresse du véritable envoyeur.
 
 La classe `Message` contient le texte du sujet et du body du mail.
 
 La classe `Prank` contient un groupe et un message et permettra ainsi de récupérer tout le nécessaire pour générer un email.
 
-La classe `ConfigurationManager` permet d'instancier toutes les informations nécessaires à la création d'objets et à la connexion à un serveur.
+La classe `ConfigurationManager` permet d'instancier toutes les informations nécessaires à la création des ressources et à la connexion à un serveur.
 
 La classe `PrankGenerator` permet de générer une liste de `Prank`.
 
@@ -96,6 +114,6 @@ La classe `SmtpClient` qui n'est pas dans le schéma permet d'établir la connex
 
 
 
-Ci-dessous un exemple de dialogue entre notre client et un serveur Mock SMTP.
+Ci-dessous un exemple de dialogue entre notre client et un serveur Mock SMTP lors d'un envoi d'un prank : 
 
-![dialogues](./dialogues.jpeg)
+![dialogues](images/dialogues.jpeg)
